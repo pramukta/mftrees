@@ -1,5 +1,4 @@
 import os
-import warnings
 
 import numpy as np
 from numpy.fft import fft2, fftshift
