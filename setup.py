@@ -10,8 +10,8 @@ setup(
     packages=['mftrees'],
     entry_points={
         "console_scripts": [
-            "ftfeat = mftrees.features:oneshot",
-            "mfemb = mftrees.manifold:main"
+            "mft.features = mftrees.features:oneshot",
+            "mft.train = mftrees.manifold:main"
         ]
     }
 )
