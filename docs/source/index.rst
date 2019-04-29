@@ -4,6 +4,9 @@ Welcome to mftrees's documentation!
 .. click:: mftrees.features:oneshot
    :prog: ftfeat
 
+.. click:: mftrees.manifold:main
+   :prog: mfemb
+          
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
