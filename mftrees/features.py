@@ -1,7 +1,6 @@
 import os
 from argparse import ArgumentParser
 import warnings
-import csv
 
 import numpy as np
 from numpy.fft import fft2, fftshift
