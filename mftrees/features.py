@@ -7,7 +7,7 @@ import rasterio
 from rasterio.vrt import WarpedVRT
 from rasterio.enums import Resampling
 
-from tqdm import trange, tqdm
+from tqdm import tqdm
 import click
 
 
