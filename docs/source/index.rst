@@ -1,6 +1,9 @@
 Welcome to mftrees's documentation!
 ===================================
 
+.. click:: mftrees.features:oneshot
+   :prog: ftfeat
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
