@@ -2,10 +2,10 @@ Welcome to mftrees's documentation!
 ===================================
 
 .. click:: mftrees.features:oneshot
-   :prog: ftfeat
+   :prog: mft.features
 
 .. click:: mftrees.manifold:main
-   :prog: mfemb
+   :prog: mft.train
           
 .. toctree::
    :maxdepth: 2
