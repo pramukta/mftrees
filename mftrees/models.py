@@ -94,4 +94,4 @@ def predict(model_file, mosaic_file, augment_file, out,
     out_profile = profile.copy()
 
     with rasterio.open(out, "w", **out_profile) as outfile:
-        outfile.write(output, 1)
+        outfile.write(np.clip(output, 0, np.inf), 1)
