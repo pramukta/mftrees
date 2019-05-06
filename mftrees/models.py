@@ -5,6 +5,7 @@ import numpy as np
 import rasterio
 from rasterio.enums import Resampling
 from rasterio.vrt import WarpedVRT
+from rasterio.errors import RasterioIOError
 from sklearn.externals import joblib
 
 from tqdm import tqdm, trange
@@ -53,16 +54,15 @@ def predict(model_file, mosaic_file, augment_file, out,
 
         if blm:
             matchers = []
-            with rasterio.open(mosaic_file) as dataset:
-                for idx in trange(dataset.count, ncols=100, desc="Building matchers"):
-                    img = dataset.read(idx + 1)
-                    mask = img != dataset.nodata
-                    profile = dataset.profile
+            with rasterio.open(mosaic_file) as dst:
+                for idx in trange(dst.count, ncols=100, desc="Building matchers"):
+                    img = dst.read(idx + 1)
+                    mask = img != dst.nodata
                     with rasterio.open(reference) as ref:
                         # Project reference data into mosaic CRS
                         # NOTE: thinking nearest neighbor may be best for preserving histogram properties
-                        with WarpedVRT(ref, crs=profile["crs"], resampling=Resampling.nearest) as vrt:
-                            wnd = vrt.window(*dataset.bounds)
+                        with WarpedVRT(ref, crs=dst.profile["crs"], resampling=Resampling.nearest) as vrt:
+                            wnd = vrt.window(*dst.bounds)
                             ref_img = vrt.read(idx + 1, window=wnd, out_shape=img.shape)
                             ref_mask = ref_img != ref.nodata
 
@@ -79,7 +79,14 @@ def predict(model_file, mosaic_file, augment_file, out,
                                                        right[cb[i]:cb[i+1]], top[cb[i]:cb[i+1]])),
                                          total=cb[i+1]-cb[i], ncols=100):
                         dst_wnd = vrt.window(*wnd)
-                        data = vrt.read(window=dst_wnd, out_shape=out_shape)
+                        try:
+                            data = vrt.read(window=dst_wnd, out_shape=out_shape)
+                        except RasterioIOError:
+                            # NOTE: In this context, indicates that we tried to read a window that extends outside
+                            # the VRT bounds.  Appears to be edge cases in situations where alignment between augment
+                            # data and prediction data is not perfect.
+                            warnings.warn("Messed up window")
+                            data = np.zeros(out_shape)
                         if blm:
                             for idx in range(data.shape[0]):
                                 data[idx] = matchers[idx](data[idx])
@@ -92,6 +99,6 @@ def predict(model_file, mosaic_file, augment_file, out,
 
     print("\n\n")
     out_profile = profile.copy()
-
+    out_profile["dtype"] = output.dtype
     with rasterio.open(out, "w", **out_profile) as outfile:
         outfile.write(output, 1)
