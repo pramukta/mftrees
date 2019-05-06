@@ -6,3 +6,10 @@ Predicting stand structure parameters for tropical forests at large geographic s
 The selected features are the square root of radially averaged Fourier power spectra computed as follows
 
 Generalizing a carbon estimation model for tropical rainforests
+
+
+```
+gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif
+
+mft.predict --out a_pred.tif --mosaic-file 20190409_143133_1032_3B_AnalyticMS_SR.tif -a a_srtm.tif --blm --reference /media/prak/codex/peru-mosaic.vrt /media/prak/codex/model-full-clustered-3-8-3.joblib
+```
