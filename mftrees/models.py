@@ -86,7 +86,7 @@ def predict(model_file, mosaic_file, augment_file, out,
                         batch.append(np.sqrt(full_feature_vector(data, bin_map).ravel()))
                     batch = np.hstack([np.vstack(batch), augment_data[cb[i]:cb[i+1]]])
                     try:
-                        output[coords[1, cb[i]:cb[i+1]], coords[0, cb[i]:cb[i+1]]] = model.predict(batch)
+                        output[coords[1, cb[i]:cb[i+1]], coords[0, cb[i]:cb[i+1]]] = np.clip(model.predict(batch), 0, np.inf)
                     except AssertionError as ae:
                         warnings.warn("AssertionError while processing chunk, skipping")
 
@@ -94,4 +94,4 @@ def predict(model_file, mosaic_file, augment_file, out,
     out_profile = profile.copy()
 
     with rasterio.open(out, "w", **out_profile) as outfile:
-        outfile.write(np.clip(output, 0, np.inf), 1)
+        outfile.write(output, 1)
