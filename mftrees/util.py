@@ -7,6 +7,7 @@ from rasterio.enums import Resampling
 from rasterio.vrt import WarpedVRT
 
 import click
+from tqdm import trange
 
 def all_equal(arg1, arg2):
     """
@@ -73,12 +74,29 @@ def create_histmatcher(img, ref):
 
     return _matcher
 
+@click.command(help="Histogram match a georeferenced raster to a reference")
+@click.option("-o", "--out_path", default="matched.tif", type=click.Path(), help="classification output geotiff")
+@click.option("-r", "--ref_path", default="reference.vrt", help="Reference mosaic used for baselayer matching")
+@click.argument("img_path", type=click.Path(exists=True))
+def histmatch(img_path, ref_path, out_path):
+    matchers = []
+    with rasterio.open(img_path) as dataset:
+        for idx in trange(dataset.count, ncols=100, desc="Building matchers"):
+            img = dataset.read(idx + 1)
+            mask = img != dataset.nodata
+            profile = dataset.profile
+            with rasterio.open(ref_path) as ref:
+                # Project reference data
+                # NOTE: thinking nearest neighbor may be best for preserving histogram properties
+                with WarpedVRT(ref, crs=profile["crs"], resampling=Resampling.nearest) as vrt:
+                    wnd = vrt.window(*dataset.bounds)
+                    ref_img = vrt.read(idx + 1, window=wnd, out_shape=img.shape)
+                    ref_mask = ref_img != ref.nodata
 
-def histmatch(img_path, ref_path):
-    with rasterio.open("/pool/work/planet/recent-nochange/f0.tif") as dst:
-    img = dst.read(4)
-    mask = img != dst.nodata
-    with rasterio.open("/pool/work/planet/recent-nochange/f1.tif") as ref:
-        wnd = ref.window(*dst.bounds)
-        ref_img = ref.read(4, window=wnd, out_shape=img.shape)
-        ref_mask = ref_img != ref.nodata
+            matchers.append(create_histmatcher(img[mask & ref_mask], ref_img[mask & ref_mask]))
+
+    # Apply all band transformations
+    with rasterio.open(img_path) as dataset:
+        with rasterio.open(out_path, "w", **dataset.profile) as outfile:
+            for idx in trange(dataset.count, ncols=100, desc="Applying transformations"):
+                outfile.write(matchers[idx](dataset.read(idx+1)).astype(profile["dtype"]), idx+1)
