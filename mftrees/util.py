@@ -2,7 +2,11 @@ from functools import partial
 import sys
 
 import numpy as np
+import rasterio
+from rasterio.enums import Resampling
+from rasterio.vrt import WarpedVRT
 
+import click
 
 def all_equal(arg1, arg2):
     """
@@ -68,3 +72,13 @@ def create_histmatcher(img, ref):
         return blmfn(cdffn(chunk))
 
     return _matcher
+
+
+def histmatch(img_path, ref_path):
+    with rasterio.open("/pool/work/planet/recent-nochange/f0.tif") as dst:
+    img = dst.read(4)
+    mask = img != dst.nodata
+    with rasterio.open("/pool/work/planet/recent-nochange/f1.tif") as ref:
+        wnd = ref.window(*dst.bounds)
+        ref_img = ref.read(4, window=wnd, out_shape=img.shape)
+        ref_mask = ref_img != ref.nodata
