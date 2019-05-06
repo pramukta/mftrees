@@ -52,30 +52,21 @@ def predict(model_file, mosaic_file, augment_file, out,
         augment_data = np.vstack([dataset.read(b+1)[coords[1], coords[0]].ravel() for b in range(dataset.count)]).T
 
         if blm:
-            with rasterio.open(reference) as ref:
-                with WarpedVRT(ref, crs=profile["crs"], resampling=Resampling.bilinear) as baselayer:
-                    dst_wnd = baselayer.window(left.min(), bottom.min(), right.max(), top.max())
-                    out_shape = (ref.count, *[int(e/pixel_size)*s for e, s in zip(dataset.res, target.shape)])
-                    target = baselayer.read(window=dst_wnd, out_shape=out_shape)
-                    blmfns = []
-                    for b in target:
-                        t_vals, t_counts = np.unique(b.ravel(), return_counts=True)
-                        t_cdf = n.cumsum(t_counts).astype(np.double) / b.size
-                    blmfns.append(partial(np.interp, xp=t_cdf, fp=t_vals))
+            matchers = []
+            with rasterio.open(mosaic_file) as dataset:
+                for idx in trange(dataset.count, ncols=100, desc="Building matchers"):
+                    img = dataset.read(idx + 1)
+                    mask = img != dataset.nodata
+                    profile = dataset.profile
+                    with rasterio.open(reference) as ref:
+                        # Project reference data into mosaic CRS
+                        # NOTE: thinking nearest neighbor may be best for preserving histogram properties
+                        with WarpedVRT(ref, crs=profile["crs"], resampling=Resampling.nearest) as vrt:
+                            wnd = vrt.window(*dataset.bounds)
+                            ref_img = vrt.read(idx + 1, window=wnd, out_shape=img.shape)
+                            ref_mask = ref_img != ref.nodata
 
-            with rasterio.open(mosaic_file) as mosaic:
-                with WarpedVRT(ref, crs=profile["crs"], resampling=Resampling.bilinear) as vrt:
-                    dst_wnd = vrt.window(left.min(), bottom.min(), right.max(), top.max())
-                    out_shape = (mosaic.count, *[int(e/pixel_size)*s for e, s in zip(dataset.res, target.shape)])
-                    region = vrt.read(window=dst_wnd, out_shape=out_shape)
-                    cdffns = []
-                    for b in region:
-                        s_vals, s_counts = np.unique(b.ravel(), return_counts=True)
-                        s_cdf = n.cumsum(s_counts).astype(np.double) / region.size
-                    cdffns.append(partial(np.interp, xp=s_vals, fp=s_cdf))
-
-            def _blm(chunk):
-                return np.stack([blmfn(cdffn(band)) for blmfn, cdffn, band in zip(blmfns, cdffns, chunk)])
+                    matchers.append(create_histmatcher(img[mask & ref_mask], ref_img[mask & ref_mask]))
 
         with rasterio.open(mosaic_file) as mosaic:
             out_shape = (mosaic.count, *[int(e/pixel_size) for e in dataset.res])
@@ -90,7 +81,8 @@ def predict(model_file, mosaic_file, augment_file, out,
                         dst_wnd = vrt.window(*wnd)
                         data = vrt.read(window=dst_wnd, out_shape=out_shape)
                         if blm:
-                            data = _blm(data)
+                            for idx in range(data.shape[0]):
+                                data[idx] = matchers[idx](data[idx])
                         batch.append(np.sqrt(full_feature_vector(data, bin_map).ravel()))
                     batch = np.hstack([np.vstack(batch), augment_data[cb[i]:cb[i+1]]])
                     try:
