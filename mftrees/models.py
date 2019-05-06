@@ -5,12 +5,12 @@ import numpy as np
 import rasterio
 from rasterio.enums import Resampling
 from rasterio.vrt import WarpedVRT
-from skimage.util import view_as_windows
 from sklearn.externals import joblib
 
 from tqdm import tqdm, trange
 import click
 
+from mftrees.util import create_histmatcher
 from mftrees.features import fmap, full_feature_vector
 
 @click.command(help="MODELS_FILE: joblib-serialized carbon estimation model")
