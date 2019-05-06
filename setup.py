@@ -13,7 +13,7 @@ setup(
             "mft.features = mftrees.features:oneshot",
             "mft.train = mftrees.manifold:main",
             "mft.predict = mftrees.models:predict",
-            "mft.histmatch = mftrees.utils:histmatch"
+            "mft.histmatch = mftrees.util:histmatch"
         ]
     }
 )
