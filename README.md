@@ -9,7 +9,9 @@ Generalizing a carbon estimation model for tropical rainforests
 
 
 ```
-gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif
+gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif # prepare augment data / target area
 
-mft.predict --out a_pred.tif --mosaic-file 20190409_143133_1032_3B_AnalyticMS_SR.tif -a a_srtm.tif --blm --reference /media/prak/codex/peru-mosaic.vrt /media/prak/codex/model-full-clustered-3-8-3.joblib
+mft.predict --out a_pred.tif --mosaic-file 20190409_143133_1032_3B_AnalyticMS_SR.tif -a a_srtm.tif --blm --reference /media/prak/codex/peru-mosaic.vrt /media/prak/codex/model-full-clustered-3-8-3.joblib # run prediction
 ```
+
+gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline {}_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt {}_srtm.tif
