@@ -18,6 +18,12 @@ Relevant parameters, an example invocation.
 
 .. click:: mftrees.manifold:main
    :prog: mft.train
+
+.. click:: mftrees.util:histmatch
+   :prog: mft.histmatch
+
+.. click:: mftrees.models:predict
+   :prog: mft.predict
           
 .. toctree::
    :maxdepth: 2

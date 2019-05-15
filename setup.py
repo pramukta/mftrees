@@ -11,7 +11,9 @@ setup(
     entry_points={
         "console_scripts": [
             "mft.features = mftrees.features:oneshot",
-            "mft.train = mftrees.manifold:main"
+            "mft.train = mftrees.manifold:main",
+            "mft.predict = mftrees.models:predict",
+            "mft.histmatch = mftrees.util:histmatch"
         ]
     }
 )
