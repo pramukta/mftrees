@@ -16,6 +16,22 @@ The general steps to training and applying a model with these routines are:
 
 ### Data Preparation
 
+A source normalized mosaic, an augment parameters layer, and a prediction target image are needed to train and use the model.  These do not need to be in any particular projection, or even in the same projection, however, for sanity, the prediction target should probably be in a local UTM projection or something similar.  For us this means preparing 3 files:
+
+* `tch.tif` - 100x100m averaged tree height measurements made from aerial LiDAR surveys in the local UTM coordinate system. (prediction target) 
+* `srtm.vrt` - SRTM elevation data that covers at least all  of the area addressed by `tch.tif` (augment parameters)
+* `mosaic.vrt` - 4-band PlanetScope normalized mosaic with that covers at least all of the area addressed by `tch.tif` (mosaic)
+
+Importantly, `tch.tif` dictates the chipping and projection behavior of the model so it's important to use `gdalwarp` or similar to produce data at the desired output resolution and in a compatible projection.  
+
+Once the model is trained, and we are ready to apply it to new data, we need to prepare an augment file for the relevant area.  During prediction, the augment file determines the chipping and projection behavior of the model.  As such, an appropriate `gdalwarp` command needs, such as the one below, needs to be used.
+
+```
+gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif
+```
+
+This command cuts out a section of SRTM data specified by footprint of a PlanetScope image (with id `20190409_143133_1032`), based on the image's metadata file (which is valid GeoJSON).  It also projects it into the appropriate UTM zone. 
+
 ### Feature Generation
 
 ### Model Fitting
@@ -54,11 +70,3 @@ The presence of challenges such as unspecified terrain types, weather conditions
 Further, the presenece of mixtures of terrain within grid cells of appropriate size for allometry may present a sizable question, both because they don't properly reqpresent a categorical variable and because the allometric equations are not designed with mixtures in mind.  A mixture modelling or object-based apporach may be investigated to address this issue, however, since the issue is common to both 1 ha aggregated LiDAR surveys we have been provided, as well as satellite imagery, it will be considered beyond the scope of this exercise.
 
 To address these issues we compute k-means clusters within our low dimensional embedding, and use this as a rough implicit categorization of the data.  we then use cluster membership to define an inverse class frequence weighting scheme that is used while training an xgboost regressor.
-
-```
-gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif # prepare augment data / target area
-
-mft.predict --out a_pred.tif --mosaic-file 20190409_143133_1032_3B_AnalyticMS_SR.tif -a a_srtm.tif --blm --reference /media/prak/codex/peru-mosaic.vrt /media/prak/codex/model-full-clustered-3-8-3.joblib # run prediction
-```
-
-gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline {}_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt {}_srtm.tif
