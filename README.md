@@ -5,6 +5,8 @@ Predicting stand structure parameters for tropical forests at large geographic s
 
 The selected features are the square root of radially averaged Fourier power spectra computed as follows
 
+Docs are present in the repo (/docs/html/index.html) but can't be linked to until the repo is made public.
+
 ## Quickstart
 
 The general steps to training and applying a model with these routines are:
