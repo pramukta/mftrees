@@ -5,6 +5,23 @@ Predicting stand structure parameters for tropical forests at large geographic s
 
 The selected features are the square root of radially averaged Fourier power spectra computed as follows
 
+## Quickstart
+
+The general steps to training and applying a model with these routines are:
+
+1.  Prepare data
+2.  Use `mft.features` to generate training data.
+3.  Use `mft.train` to fit and save a model.
+4.  Use `mft.predict` to apply the model to new imagery.
+
+### Data Preparation
+
+### Feature Generation
+
+### Model Fitting
+
+### Prediction
+
 ## Discussion
 
 Generalizing a carbon estimation model for tropical rainforests based on PlanetScope mosaics involve developing techniques that are resilient to variety of imaging inconsistencies that are almost always present in remote sensing data.  These include:
