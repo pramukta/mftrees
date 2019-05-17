@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>mftrees package &#8212; mftrees 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mftrees 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="mftrees-package">
+<h1>mftrees package<a class="headerlink" href="#mftrees-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-mftrees.features">
+<span id="mftrees-features-module"></span><h2>mftrees.features module<a class="headerlink" href="#module-mftrees.features" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mftrees.features.feature_vector">
+<code class="descclassname">mftrees.features.</code><code class="descname">feature_vector</code><span class="sig-paren">(</span><em>sample</em>, <em>bins</em><span class="sig-paren">)</span><a class="headerlink" href="#mftrees.features.feature_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a discretized, radially averaged Fourier power spectra for use as a
+feature vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>ndarray</em>) – Input image as a 2-D ndarray</p></li>
+<li><p><strong>bins</strong> (<em>ndarray</em>) – ndarray with same dimensions as _sample_, containing the integer bin label for each
+element in _sample_.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>float64 1-D ndarray with length <cite>np.unique(bins).size</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mftrees.features.fmap">
+<code class="descclassname">mftrees.features.</code><code class="descname">fmap</code><span class="sig-paren">(</span><em>block_size</em><span class="sig-paren">)</span><a class="headerlink" href="#mftrees.features.fmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a wavelength map for a FFT output with dimensions of <cite>block_size</cite></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mftrees.features.full_feature_vector">
+<code class="descclassname">mftrees.features.</code><code class="descname">full_feature_vector</code><span class="sig-paren">(</span><em>sample</em>, <em>bins</em><span class="sig-paren">)</span><a class="headerlink" href="#mftrees.features.full_feature_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute and concatenate feature vectors across all image bands in (c, h, w) form</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> (<em>ndarray</em>) – Input image as a 2-D ndarray</p></li>
+<li><p><strong>bins</strong> (<em>ndarray</em>) – ndarray with same dimensions as _sample_, containing the integer bin label for each
+element in _sample_.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mftrees.features.spectrum">
+<code class="descclassname">mftrees.features.</code><code class="descname">spectrum</code><span class="sig-paren">(</span><em>arr</em><span class="sig-paren">)</span><a class="headerlink" href="#mftrees.features.spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a 2-D Fourier power spectra of an image, based on a unitary forward FFT</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<em>ndarray</em>) – Input image as a 2-D ndarray</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>float64 ndarray with same dimensions as _arr_ containing the Fourier power
+spectra.  Low frequency components are shifted to the center of the image.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mftrees.util">
+<span id="mftrees-util-module"></span><h2>mftrees.util module<a class="headerlink" href="#module-mftrees.util" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mftrees.util.all_equal">
+<code class="descclassname">mftrees.util.</code><code class="descname">all_equal</code><span class="sig-paren">(</span><em>arg1</em>, <em>arg2</em><span class="sig-paren">)</span><a class="headerlink" href="#mftrees.util.all_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut function to compute element-wise equality between two iterables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arg1</strong> (<em>iterable</em>) – Any iterable sequence</p></li>
+<li><p><strong>arg2</strong> (<em>iterable</em>) – Any iterable sequence that has the same length as arg1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if each pair of elements are equal.  Otherwise, False</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mftrees.util.create_histmatcher">
+<code class="descclassname">mftrees.util.</code><code class="descname">create_histmatcher</code><span class="sig-paren">(</span><em>img</em>, <em>ref</em><span class="sig-paren">)</span><a class="headerlink" href="#mftrees.util.create_histmatcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a function that will histogram match pieces of a source image with a target image, incrementally</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>ndarray</em>) – NumPy array containing the image data to transform</p></li>
+<li><p><strong>ref</strong> (<em>ndarray</em>) – Numpy array containing the reference image data for the transformation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A function that takes a 2-D NumPy array to be transformed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="mftrees.util.r2">
+<code class="descclassname">mftrees.util.</code><code class="descname">r2</code><span class="sig-paren">(</span><em>y_pred</em>, <em>y</em>, <em>w=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#mftrees.util.r2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute generalized Pearson’s R^2, with optional weights</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_pred</strong> (<em>ndarray</em>) – NumPy array of predicted values</p></li>
+<li><p><strong>y</strong> (<em>ndarray</em>) – NumPy array of true values the same length and dimensionality as <cite>y_pred</cite></p></li>
+<li><p><strong>w</strong> (<em>float</em><em> or </em><em>ndarray</em><em>, </em><em>optional</em>) – Weights for each sample (default is 1.0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mftrees">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mftrees" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">mftrees package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-mftrees.features">mftrees.features module</a></li>
+<li><a class="reference internal" href="#module-mftrees.util">mftrees.util module</a></li>
+<li><a class="reference internal" href="#module-mftrees">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/mftrees.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mftrees 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Pramukta Kumar.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>
