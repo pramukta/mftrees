@@ -53,16 +53,15 @@ class NystroemSpectralProjection(TransformerMixin):
             X = X[:self.max_samples, :]
 
         A = self.affinity(self.x_ref, self.x_ref) # NOTE: A is expected to be positive definite
+        self.pinv_A = sp.linalg.pinvh(A)
         B = self.affinity(self.x_ref, X)
 
         a = np.sqrt( 1.0 / np.sum(np.vstack([A, B.T]), axis=0))
-        b = np.sqrt( 1.0 / (np.sum(B, axis=0) + np.sum(B, axis=1) @ sp.linalg.pinvh(A) @ B ))
+        b = np.sqrt( 1.0 / (np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B ))
         A = A * np.outer(a, a)
         B = B * np.outer(a, b) # this is still a problem
 
-        self.pinv_A = sp.linalg.pinvh(A)
-
-        Asi = np.real(sp.linalg.sqrtm(self.pinv_A))
+        Asi = np.real(sp.linalg.sqrtm(sp.linalg.pinv(A)))
         Q = A + Asi @ B @ B.T @ Asi # paper calls this S
         U, L, T = np.linalg.svd(Q) # first decomp
 
@@ -79,7 +78,7 @@ class NystroemSpectralProjection(TransformerMixin):
         # assert np.all((np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B) > 0), f"Unexpected value of in affinity normalization denominator: {np.min(np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B)}"
         # NOTE: I'm not sure why but pinv_A @ B sometimes produces negative values even though it shouldn't
 
-        b = np.sqrt( 1.0 / np.abs(np.finfo(np.float32).eps + np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B))
+        b = np.sqrt( 1.0 / (np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B))
         assert np.all(~np.isnan(b)), "Unexpected NaN values found"
         B = B * np.outer(self.a, b)
         V = B.T @ self.Asi @ self.U @ self.pinv_sqrt_L
