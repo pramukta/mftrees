@@ -1,5 +1,8 @@
 from setuptools import setup
 
+with open("requirements.txt") as f:
+    reqs = f.read().splitline()
+
 setup(
     name = "mftrees",
     version = "0.0.1",
@@ -15,5 +18,6 @@ setup(
             "mft.predict = mftrees.models:predict",
             "mft.histmatch = mftrees.util:histmatch"
         ]
-    }
+    },
+    install_requires=reqs
 )

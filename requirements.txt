@@ -1,0 +1,8 @@
+numpy
+scipy
+rasterio
+tqdm
+click
+numba
+scikit-learn
+py-xgboost
