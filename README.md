@@ -12,9 +12,9 @@ Docs are present in the repo (/docs/html/index.html) but can't be linked to unti
 The general steps to training and applying a model with these routines are:
 
 1.  Prepare data
-2.  Use `mft.features` to generate training data.
-3.  Use `mft.train` to fit and save a model.
-4.  Use `mft.predict` to apply the model to new imagery.
+2.  Use the cli program `mft.features` to generate training data.
+3.  Use the cli program `mft.train` to fit and save a model.
+4.  Use the cli `mft.predict` to apply the model to new imagery.
 
 ### Data Preparation
 
@@ -28,7 +28,7 @@ Importantly, `tch.tif` dictates the chipping and projection behavior of the mode
 
 Once the model is trained, and we are ready to apply it to new data, we need to prepare an augment file for the relevant area.  During prediction, the augment file determines the chipping and projection behavior of the model.  As such, an appropriate `gdalwarp` command needs, such as the one below, needs to be used.
 
-```
+```bash
 gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif
 ```
 
@@ -36,9 +36,21 @@ This command cuts out a section of SRTM data specified by footprint of a PlanetS
 
 ### Feature Generation
 
+```bash
+mft.features -t tch.tif --pixel-size 4.0 --bins 20 -a srtm.vrt -o features.npz mosaic.vrt
+```
+
 ### Model Fitting
 
+```bash
+mft.train --n-components 3000 -c 8 -d 4 -lr 0.05 --gpu -of model.joblib features.npz
+```
+
 ### Prediction
+
+```bash
+mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif --blm --reference mosaic.vrt -o pred.tif model.joblib
+```
 
 ## Discussion
 
