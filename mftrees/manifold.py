@@ -50,7 +50,8 @@ class NystroemSpectralProjection(TransformerMixin):
 
     x_ref : ndarray
         N samples x M dimensions ndarray containing the landmark points to use for spectral projection.  For
-        good results, it is crucial that this set contains a set of samples that can adequately describe the full dataset.
+        good results, it is crucial that this set contains a set of samples that can adequately describe
+        the full dataset.
 
     d : int
         Number of dimensions in the manifold embedding
@@ -68,15 +69,26 @@ class NystroemSpectralProjection(TransformerMixin):
         Attributes
         ----------
         X : ndarray
+            N samples x M dimensions ndarray containing the landmark points to use for spectral projection.  For
+            good results, it is crucial that this set contains a set of samples that can adequately describe the
+            full dataset.
 
         kernel : callable
+            Positive definite kernel function that takes 1 or 2 ndarrays of features and returns the resulting
+            kernel matrix.
 
         dims : int
+            Number of dimensions in the manifold embedding
 
         chunk_size : int
+            This specifies the number of features that will be processed at any one time during transformation,
+            as well as the number of elements to use for the initial projection.  This is important because the
+            initial projection set helps define the eigenspace that all subsequent features will use.  In addition,
+            chunking allows for the processing of larger datasets.
 
         max_samples : int
-
+            Maximum number of landmarks to use if provided with too many.  Using too many landmarks will typically
+            cause out-of-memory errors.
         """
         super().__init__()
         self.chunk_size = chunk_size
