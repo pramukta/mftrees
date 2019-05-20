@@ -12,7 +12,7 @@ from tqdm import tqdm, trange
 import click
 
 from mftrees.util import create_histmatcher
-from mftrees.features import fmap, full_feature_vector
+from mftrees.features import full_feature_vector
 
 @click.command(help="MODELS_FILE: joblib-serialized carbon estimation model")
 @click.option("--mosaic-file", default="mosaic.tif", type=click.Path(exists=True),
