@@ -36,7 +36,48 @@ def affinity(X, Y=None, n_bands=5):
     return np.sqrt(np.sum(dvec*dvec, axis=2)/dvec.shape[2]) # pairwise rms cosine similarity over bands and lengths
 
 class NystroemSpectralProjection(TransformerMixin):
+    """A unified manifold embedding and nystroem projection strategy for positive definite kernels
+
+    TODO: longer description
+
+    Attributes
+    ----------
+    chunk_size : int
+        This specifies the number of features that will be processed at any one time during transformation,
+        as well as the number of elements to use for the initial projection.  This is important because the
+        initial projection set helps define the eigenspace that all subsequent features will use.  In addition,
+        chunking allows for the processing of larger datasets.
+
+    x_ref : ndarray
+        N samples x M dimensions ndarray containing the landmark points to use for spectral projection.  For
+        good results, it is crucial that this set contains a set of samples that can adequately describe the full dataset.
+
+    d : int
+        Number of dimensions in the manifold embedding
+    """
+
     def __init__(self, X, kernel=chi2_kernel, dims=3, chunk_size=200000, max_samples=100000):
+        """Construct a new NystroemSpectralProjection transformer
+
+        Note
+        ----
+        A collection of landmark points is required
+
+        TODO: describe attributes
+
+        Attributes
+        ----------
+        X : ndarray
+
+        kernel : callable
+
+        dims : int
+
+        chunk_size : int
+
+        max_samples : int
+
+        """
         super().__init__()
         self.chunk_size = chunk_size
         self.max_samples = max_samples
