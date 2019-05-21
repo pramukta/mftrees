@@ -100,6 +100,7 @@ class NystroemSpectralProjection(TransformerMixin):
         self._fitted = False
 
     def fit(self, X, y=None, **kwargs):
+        """Fit embedding from data in X"""
         # NOTE: chunk size controls number of embedding vectors
         if X.shape[0] > self.max_samples:
             np.random.shuffle(X)
@@ -114,6 +115,7 @@ class NystroemSpectralProjection(TransformerMixin):
         A = A * np.outer(a, a)
         B = B * np.outer(a, b) # this is still a problem
 
+        # NOTE: is np.real needed? mathematically it shouldn't be
         Asi = np.real(sp.linalg.sqrtm(sp.linalg.pinv(A)))
         Q = A + Asi @ B @ B.T @ Asi # paper calls this S
         U, L, T = np.linalg.svd(Q) # first decomp
@@ -126,23 +128,23 @@ class NystroemSpectralProjection(TransformerMixin):
         self._fitted = True
         return self
 
-    def transform_chunk(self, X):
+    def _transform_chunk(self, X):
         B = self.affinity(self.x_ref, X)
-        # assert np.all((np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B) > 0), f"Unexpected value of in affinity normalization denominator: {np.min(np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B)}"
-        # NOTE: I'm not sure why but pinv_A @ B sometimes produces negative values even though it shouldn't
-
         b = np.sqrt( 1.0 / (np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B))
         assert np.all(~np.isnan(b)), "Unexpected NaN values found"
+
         B = B * np.outer(self.a, b)
         V = B.T @ self.Asi @ self.U @ self.pinv_sqrt_L
         return normalize(V)
 
     def transform(self, X):
+        """Project new samples into previously fit eigenspace"""
+        assert self._fitted, "Fit has not been called.  Cannot project new samples because manifold has not been fit"
         if(X.shape[0] > self.chunk_size):
             n_splits = np.ceil(X.shape[0]/self.chunk_size)
-            return np.vstack([self.transform_chunk(c) for c in tqdm(np.array_split(X, n_splits), total=int(n_splits), ncols=100)])
+            return np.vstack([self._transform_chunk(c) for c in tqdm(np.array_split(X, n_splits), total=int(n_splits), ncols=100)])
         else:
-            return self.transform_chunk(X)
+            return self._transform_chunk(X)
 
 
 def select_landmark_features(X, y, n_bins=20, n_landmarks=5000, include_y=False):
