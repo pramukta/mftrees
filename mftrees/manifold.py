@@ -213,6 +213,14 @@ class PartitionedXgbRegressor(TransformerMixin):
 
         Parameters
         ----------
+        n_augment_cols : int
+            Number of trailing pass-through columns (for the purpose of clustering / preprocessing)
+
+        preprocess : TransformerMixin
+            Preprocessing stage compatible with sklearn's TransformerMixin interface
+
+        n_clusters : int
+            Number of k-means clusters to use as implicit class labels
         """
         self.base_estimator = base_estimator
         self.clusterer = KMeans(n_clusters=n_clusters, n_jobs=-1)
@@ -222,6 +230,28 @@ class PartitionedXgbRegressor(TransformerMixin):
         self.augments_only = augments_only
 
     def fit(self, X, y=None, weights=None, **kwargs):
+        """Fit regressor
+
+        Note
+        ----
+        Provided weights are unused.  Keyword arguments to support early stopping are currently required.
+
+        Parameters
+        ----------
+
+        X : ndarray
+            N samples x M dimensions ndarray containing the data to fit
+
+        y : ndarray
+            N element ndarray containing the target values
+
+        weights : None
+            Unused
+
+        kwargs : dict
+            Required keys: eval_set, eval_metric, early_stopping_rounds.  Values as specified by xgboost docs.
+
+        """
         if self.preprocess is not None:
             X = np.hstack([self.preprocess.transform(X[:,:-self.n_augment_cols]), X[:,-self.n_augment_cols:].reshape((-1, self.n_augment_cols))])
             eval_X = np.hstack([self.preprocess.transform(kwargs["eval_set"][0][:,:-self.n_augment_cols]),
@@ -252,6 +282,7 @@ class PartitionedXgbRegressor(TransformerMixin):
         self.estimator_ = reg
 
     def predict(self, X):
+        """Predict values for new samples"""
         assert self.estimator_ is not None, "Cannot Predict: Model has not been trained"
         if self.preprocess is not None:
             X = np.hstack([self.preprocess.transform(X[:,:-self.n_augment_cols]),
