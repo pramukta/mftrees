@@ -148,6 +148,41 @@ class NystroemSpectralProjection(TransformerMixin):
 
 
 def select_landmark_features(X, y, n_bins=20, n_landmarks=5000, include_y=False):
+    """Landmark selection guided by training data
+
+    This function attempts to sample representative landmarks by equally sampling the y histogram, as much as
+    is possible.  The y histogram is computed based on equally spaced intervals between the minimum value and
+    the 99.9th percentile value.  In addition to each histogram bin, an equal number of right tail outliers,
+    if available, are sampled.  This means that the number of landmarks returned is
+    ~`n_landmarks * (n_bins + 1) / n_bins`
+
+    Parameters
+    ----------
+
+    X : ndarray
+        N samples x M dimensions ndarray containing the data to sample landmarks from.
+
+    y : ndarray
+        1-D ndarray containing y training data corresponding to X.  It should have the same number of
+        elements as rows in X
+
+    n_bins : int
+        Number of bins for the sampling histogram
+
+    n_landmarks : int
+        Number of landmarks to sample from the histogram.  Note that due to sampling of right-tail outliers,
+        the number of landmarks returned is ~`n_landmarks * (n_bins + 1) / n_bins`
+
+    include_y : bool
+        If true, returns corresponding y values for landmark points
+
+    Returns
+    -------
+
+    ndarray or (ndarray, ndarray)
+        N samples x M dimensions ndarray containing the landmarks.  Optionally a tuple of (landmarks, y values)
+
+    """
     y_max = np.percentile(y, 99.9)
     bins = np.linspace(0, y_max, n_bins+1)
     y_bins = np.digitize(y.ravel(), bins)
