@@ -36,9 +36,17 @@ def affinity(X, Y=None, n_bands=5):
     return np.sqrt(np.sum(dvec*dvec, axis=2)/dvec.shape[2]) # pairwise rms cosine similarity over bands and lengths
 
 class NystroemSpectralProjection(TransformerMixin):
-    """A unified manifold embedding and nystroem projection strategy for positive definite kernels
+    """A unified manifold embedding and Nystroem projection strategy for positive definite kernels
 
-    TODO: longer description
+    This class implements the one-shot manifold embedding and extension strategy from the Fowlkes et al.
+    paper titled _Spectral Grouping using the Nystroem Method_ [1].  This consists of a combinine graph theoretical
+    manifold embedding via Laplacian eigenmaps with the Nystroem method for kernel approximation applied to
+    estimate a larger affinity matrix, in order to determine an embedding space.  In this implementation, the
+    concept is slightly extended to include the ability to transform new samples into the existing manifold.  This
+    method requires that the selected kernel is a positive-definite pairwise affinity.
+
+    [1] Fowlkes, C., Belongie, S., Chung, F., & Malik, J. (n.d.). Spectral Grouping Using the Nyström Method.
+        Retrieved from https://people.eecs.berkeley.edu/~malik/papers/FBCM-nystrom.pdf
 
     Attributes
     ----------
@@ -199,7 +207,12 @@ def select_landmark_features(X, y, n_bins=20, n_landmarks=5000, include_y=False)
 class PartitionedXgbRegressor(TransformerMixin):
     """An xgboost regressor variant with implicit inverse class frequency weighting, and a few other tricks
 
-    TODO: longer description
+    This is a passthrough to xgboost's standard XgbRegressor, with an added preprocessing stage, intended for
+    use with the NystroemSpectralProjection class, and a KMeans clustering stage, which is used to compute
+    sample weighting.  The premise is that the combination, which amounts to a particular graph spectral clustering,
+    represents an implicit set of categorical variables that are partially driving the behavior of a continuous
+    output variable.  We attempt to counteract this by applying an inverse-frequency weighting scheme based on
+    an implicit set of classes defined by the clustering.
 
     Attributes
     ----------
