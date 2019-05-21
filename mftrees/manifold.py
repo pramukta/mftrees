@@ -64,9 +64,7 @@ class NystroemSpectralProjection(TransformerMixin):
         ----
         A collection of landmark points is required
 
-        TODO: describe attributes
-
-        Attributes
+        Parameters
         ----------
         X : ndarray
             N samples x M dimensions ndarray containing the landmark points to use for spectral projection.  For
@@ -199,7 +197,23 @@ def select_landmark_features(X, y, n_bins=20, n_landmarks=5000, include_y=False)
 
 
 class PartitionedXgbRegressor(TransformerMixin):
+    """An xgboost regressor variant with implicit inverse class frequency weighting, and a few other tricks
+
+    TODO: longer description
+
+    Attributes
+    ----------
+    clusterer : KMeans
+
+    n_augment_cols : int
+        Number of trailing pass-through columns (for the purpose of clustering / preprocessing)
+    """
     def __init__(self, base_estimator=XGBRegressor(), n_augment_cols=1, preprocess=None, n_clusters=8, augments_only=False):
+        """Construct a new PartitionedXgbRegressor model
+
+        Parameters
+        ----------
+        """
         self.base_estimator = base_estimator
         self.clusterer = KMeans(n_clusters=n_clusters, n_jobs=-1)
         self.estimator_ = None
