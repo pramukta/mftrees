@@ -7,6 +7,10 @@ The selected features are the square root of radially averaged Fourier power spe
 
 Docs are present in the repo (/docs/html/index.html) but can't be linked to until the repo is made public.
 
+## Setup
+
+Installation instructions...
+
 ## Quickstart
 
 The general steps to training and applying a model with these routines are:
