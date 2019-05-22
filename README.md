@@ -62,6 +62,8 @@ Applying a trained model to new data is achieved by running the `mft.predict` cl
 $ mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif --blm --reference mosaic.vrt -o pred.tif model.joblib
 ```
 
+In this example, we are applying a model on a new PlanetScope image with `a_srtm.tif` prepared as described in the earlier section.  The `--blm` flag, crucially attempts to match the overall spectral info with the training mosaic.  This mosaic is specififed with the `--reference mosaic.vrt` option.  The prediction is output to `pred.tif`.
+
 ## Discussion
 
 Generalizing a carbon estimation model for tropical rainforests based on PlanetScope mosaics involve developing techniques that are resilient to variety of imaging inconsistencies that are almost always present in remote sensing data.  These include:
