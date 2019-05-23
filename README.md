@@ -7,6 +7,10 @@ The selected features are the square root of radially averaged Fourier power spe
 
 Docs are present in the repo (/docs/html/index.html) but can't be linked to until the repo is made public.
 
+## Setup
+
+Installation instructions...
+
 ## Quickstart
 
 The general steps to training and applying a model with these routines are:
@@ -36,21 +40,33 @@ This command cuts out a section of SRTM data specified by footprint of a PlanetS
 
 ### Feature Generation
 
+Generating a training dataset involves running the `mft.features` cli utility in a manner similar to the line below
+
 ```bash
-mft.features -t tch.tif --pixel-size 4.0 --bins 20 -a srtm.vrt -o features.npz mosaic.vrt
+$ mft.features -t tch.tif --pixel-size 4.0 --bins 20 -a srtm.vrt -o features.npz mosaic.vrt
 ```
+
+In this example, `-t tch.tif` specifies the target map, which dictates the `y` value for training, as well as the projection and chipping area for feature computation.  The `--pixel-size 4.0` parameter sets the resolution of the image patches (in meters usually, depending on the projection of `tch.tif`).  Here we are using it to downsample our PlanetScope normalized mosaic (specified as `mosaic.vrt`), because we have observed that different patches can have slightly different resolutions that appear to be between 3-4m per pixel.  The `--bins 20` parameter is used to set the number of length scale bins used in feature generation.  This results in 20 x the number of bands in `mosaic.vrt` assuming that there is enough resolution in each patch.  The `-a srtm.vrt` adds an "augment" parameter to the dataset in addition to the Fourier texture data.  The features are saved in a file called `features.npz`
 
 ### Model Fitting
 
+Fitting a model involves running the `mft.train` cli utility in a manner similar to the line below
+
 ```bash
-mft.train --n-components 3000 -c 8 -d 4 -lr 0.05 --gpu -of model.joblib features.npz
+$ mft.train --n-components 3000 -c 8 -d 4 -lr 0.05 --gpu -of model.joblib features.npz
 ```
+
+In this example, `-n-components 3000` refers to the number of landmarks used for spectral projection.  A larger number of landmarks will increase the chance that all samples can be well represented, however, also reduces the regularization effect.  As such more is not always better, and has the added disadvantage of requiring substantial extra memory.  The number of dimensions in the embedding is specified by `-d 4`.  More dimensions retain more information about the input features, but can increase the likelihood of undesirable overfitting.  The number of K-means clusters used for implicit inverse class weighting is specified by `-c 8`.  The `--lr 0.05` parameter adjusts the xgboost learning rate and `--gpu` indicates that the program will use xgboosts `gpu_hist` method for growing trees.  The trained model is stored in `model.joblib` and includes sufficient metadata to reapply it on new data.
 
 ### Prediction
 
+Applying a trained model to new data is achieved by running the `mft.predict` cli program in a manner similar to the line below
+
 ```bash
-mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif --blm --reference mosaic.vrt -o pred.tif model.joblib
+$ mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif --blm --reference mosaic.vrt -o pred.tif model.joblib
 ```
+
+In this example, we are applying a model on a new PlanetScope image with `a_srtm.tif` prepared as described in the earlier section.  The `--blm` flag, crucially attempts to match the overall spectral info with the training mosaic.  This mosaic is specififed with the `--reference mosaic.vrt` option.  The prediction is output to `pred.tif`.
 
 ## Discussion
 
