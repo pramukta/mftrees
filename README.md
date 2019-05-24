@@ -53,7 +53,8 @@ Importantly, `tch.tif` dictates the chipping and projection behavior of the mode
 Once the model is trained, and we are ready to apply it to new data, we need to prepare an augment file for the relevant area.  During prediction, the augment file determines the chipping and projection behavior of the model.  As such, an appropriate `gdalwarp` command needs, such as the one below, needs to be used.
 
 ```bash
-gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif
+$ gdalwarp -tr 100 100 -t_srs epsg:32718 -cutline 20190409_143133_1032_metadata.json \
+  -crop_to_cutline /media/prak/codex/peru-srtm.vrt a_srtm.tif
 ```
 
 This command cuts out a section of SRTM data specified by footprint of a PlanetScope image (with id `20190409_143133_1032`), based on the image's metadata file (which is valid GeoJSON).  It also projects it into the appropriate UTM zone. 
@@ -83,7 +84,8 @@ In this example, `-n-components 3000` refers to the number of landmarks used for
 Applying a trained model to new data is achieved by running the `mft.predict` cli program in a manner similar to the line below
 
 ```bash
-$ mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif --blm --reference mosaic.vrt -o pred.tif model.joblib
+$ mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif --blm \
+  --reference mosaic.vrt -o pred.tif model.joblib
 ```
 
 In this example, we are applying a model on a new PlanetScope image with `a_srtm.tif` prepared as described in the earlier section.  The `--blm` flag, crucially attempts to match the overall spectral info with the training mosaic.  This mosaic is specififed with the `--reference mosaic.vrt` option.  The prediction is output to `pred.tif`.
