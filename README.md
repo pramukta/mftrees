@@ -92,4 +92,5 @@ In this example, we are applying a model on a new PlanetScope image with `a_srtm
 
 
 [Method Discussion](https://github.com/pramukta/mftrees/blob/master/DISCUSSION.md)
+[Documentation](https://pramukta.github.io/mftrees/html/)
 
