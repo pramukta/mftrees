@@ -88,3 +88,6 @@ $ mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif -
 
 In this example, we are applying a model on a new PlanetScope image with `a_srtm.tif` prepared as described in the earlier section.  The `--blm` flag, crucially attempts to match the overall spectral info with the training mosaic.  This mosaic is specififed with the `--reference mosaic.vrt` option.  The prediction is output to `pred.tif`.
 
+
+[Method Discussion](https://github.com/pramukta/mftrees/blob/master/DISCUSSION.md)
+
