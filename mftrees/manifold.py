@@ -351,7 +351,7 @@ def main(training_file, embed, n_boosting_stages, n_components, n_clusters,
         preprocessor = NystroemSpectralProjection(X=landmarks[:, :-n_augments],
                                                   kernel=partial(chi2_kernel, gamma=1.0/(2*np.std(landmarks[:,:-n_augments]))),
                                                   # kernel=partial(affinity, n_bands=n_bands),
-                                                  chunk_size=max_projection_samples, max_samples=max_projection_samples, dims=d)
+                                                  chunk_size=n_components, max_samples=max_projection_samples, dims=d)
         preprocessor.fit(X[fit_mask, :-n_augments], y[fit_mask])
     else:
         preprocessor = None
