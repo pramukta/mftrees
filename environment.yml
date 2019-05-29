@@ -2,15 +2,16 @@ name: planet
 channels:
   - defaults
 dependencies:
-  - numpy=1.15.4
-  - scipy=1.1.0=py37h7c811a0_2
-  - click=7.0=py37_0
-  - rasterio=1.0.21=py37hc38cc03_0
-  - py-xgboost=0.80=py37h6cbba54_0
-  - py-xgboost-gpu=0.80=py37hc51cea8_0
-  - tqdm=4.28.1=py37h28b3542_0
-  - numba=0.42.0=py37h962f231_0
-  - scikit-learn=0.20.2=py37hd81dba3_0
+  - setuptools
+  - numpy>=1.15.4
+  - scipy>=1.1.0
+  - click>=7.0
+  - rasterio>=1.0.21
+  - py-xgboost>=0.80
+#   - py-xgboost-gpu # [not win]
+  - tqdm>=4.28.1
+  - numba>=0.42.0
+  - scikit-learn>=0.20.2
   - pip:
-    - planet==1.2.2
-    - sphinx-click==2.0.2.dev1
+    - planet>=1.2.2
+    - sphinx-click>=2.0.2.dev1
