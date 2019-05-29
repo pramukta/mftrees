@@ -6,4 +6,3 @@ click
 numba
 scikit-learn
 xgboost
-git
