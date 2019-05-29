@@ -1,7 +1,7 @@
 from setuptools import setup
 
 with open("requirements.txt") as f:
-    reqs = f.read().splitline()
+    reqs = f.read().splitlines()
 
 setup(
     name = "mftrees",
