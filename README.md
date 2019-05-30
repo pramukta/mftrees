@@ -7,7 +7,7 @@ The selected features are the square root of radially averaged Fourier power spe
 
 Given a unitary 2D FFT
 
-![\tilde{X}_{kl} = \frac{1}{\sqrt{M N}} \sum_{m=0}^{M-1} \sum_{n=0}^{N-1} X_{mn} \exp \Big \{ -2 \pi i  \left( \frac{m k}{M} + \frac{n l}{N} \right) \Big \}](https://github.com/pramukta/mftrees/raw/master/src/images/unitary-2d-fft.png "Unitary 2D FFT")
+![Unitary 2D FFT](https://github.com/pramukta/mftrees/raw/master/images/unitary-2d-fft.png "\tilde{X}_{kl} = \frac{1}{\sqrt{M N}} \sum_{m=0}^{M-1} \sum_{n=0}^{N-1} X_{mn} \exp \Big \{ -2 \pi i  \left( \frac{m k}{M} + \frac{n l}{N} \right) \Big \}")
 
 Docs are present in the repo (/docs/html/index.html) but can't be linked to until the repo is made public.
 
