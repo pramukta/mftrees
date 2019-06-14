@@ -90,6 +90,9 @@ Applying a trained model to new data is achieved by running the `mft.predict` cl
 ```bash
 $ mft.predict --mosaic-file 20190409_143133_1032_3B_Analytic.tif -a a_srtm.tif --blm \
   --reference mosaic.vrt -o pred.tif model.joblib
+999885 valid cells
+100%|██████████████████████████████████████████████████████████████| 20/20 [49:20<00:00, 152.06s/it]
+100%|███████████████████████████████████████████████████████████████| 10/10 [00:42<00:00,  4.21s/it]
 ```
 
 In this example, we are applying a model on a new PlanetScope image with `a_srtm.tif` prepared as described in the earlier section.  The `--blm` flag, crucially attempts to match the overall spectral info with the training mosaic.  This mosaic is specififed with the `--reference mosaic.vrt` option.  The prediction is output to `pred.tif`.
