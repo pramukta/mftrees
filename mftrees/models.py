@@ -95,7 +95,7 @@ def predict(model_file, mosaic_file, augment_file, out,
                     try:
                         output[coords[1, cb[i]:cb[i+1]], coords[0, cb[i]:cb[i+1]]] = np.clip(model.predict(batch), 0, np.inf)
                     except AssertionError as ae:
-                        warnings.warn("AssertionError while processing chunk, skipping")
+                        warnings.warn(f"AssertionError while processing chunk, skipping: \n {ae}")
 
     print("\n\n")
     out_profile = profile.copy()
