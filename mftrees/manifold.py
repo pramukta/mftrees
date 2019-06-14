@@ -136,8 +136,8 @@ class NystroemSpectralProjection(TransformerMixin):
 
     def _transform_chunk(self, X):
         B = self.affinity(self.x_ref, X)
-        b = np.sqrt( 1.0 / (np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B))
-        assert np.all(~np.isnan(b)), "Unexpected NaN values found"
+        b = np.sqrt( 1.0 / np.abs(np.finfo(np.float32).eps + np.sum(B, axis=0) + np.sum(B, axis=1) @ self.pinv_A @ B))
+        # assert np.all(~np.isnan(b)), f"Unexpected NaN values found {b[np.where(np.isnan(b))]}"
 
         B = B * np.outer(self.a, b)
         V = B.T @ self.Asi @ self.U @ self.pinv_sqrt_L
